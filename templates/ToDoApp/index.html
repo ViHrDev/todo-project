@@ -1,0 +1,112 @@
+{% extends 'ToDoApp/layout.html' %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4 well">
+
+            <!-- code block start -->
+            <div class="twPc-div center-block">
+                <a class="twPc-bg twPc-block"></a>
+                <div>
+                    <div class="twPc-divUser">
+                        <div class="twPc-divName">
+                            <a>Username: {{ user.username }}</a>
+                        </div>
+                        <div class="twPc-divName">
+                            <a>User id: {{ user.id }}</a>
+                        </div>
+                    </div>
+
+                    <div class="twPc-divStats">
+                        <ul class="twPc-Arrange">
+                            <li class="twPc-ArrangeSizeFit">
+                                <button class="btn btn-sm btn-primary w-100 ml-2"
+                                        onclick="location.href='{% url 'logout' %}?next={{request.path}}'">Logout
+                                </button>
+                            </li>
+                            <li class="twPc-ArrangeSizeFit">
+                                <button class="btn btn-sm btn-outline-primary w-100"
+                                        onclick="location.href='{% url 'password_change' %}?next={{request.path}}'">Change password
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- code block start -->
+        </div>
+    </div>
+</div>
+<div style="margin-top: 50px;" class="ui container">
+    <h1 class="ui center aligned header">Мой менеджер задач</h1>
+    <form class="ui form" action="{% url 'add' %}" method="post">
+        {% csrf_token %}
+        <div class="field">
+            <label>Новая задача</label>
+            <input type="text" name="title" placeholder="Введи название новой задачи!">
+            <label>Описание задачи</label>
+            <input type="text" name="desc" placeholder="Введите описание задачи!">
+        </div>
+        <button class="ui teal basic button" type="submit">Добавить</button>
+    </form>
+</div>
+
+{% for todo in context_list %}
+<div class="ui segment">
+    <h1 class="ui big header">Название: {{ todo.title}}</h1>
+    <p style="margin-left: 20px;margin-top: 10px" class="ui header">Дата создания: {{ todo.date }}</p>
+    <p style="margin-left: 20px;margin-top: 10px" class="ui header">Описание: {{ todo.desc }}</p>
+
+    {% if todo.is_complete == False %}
+    <span class="ui gray label">Не завершено</span>
+    <a class="ui primary basic button" href="{% url 'update' todo_id=todo.id %}"> Завершить</a>
+    {% else %}
+    <span class="ui green label">Завершено {{ todo.date_end }}</span>
+    <a class="ui blue button" href="{% url 'update' todo_id=todo.id %}">Открыть</a>
+    {% endif %}
+    <a class="ui negative basic button" href="{% url 'delete' todo_id=todo.id %}">Удалить</a>
+</div>
+{% endfor %}
+{% else %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4 well">
+
+            <!-- code block start -->
+            <div class="twPc-div center-block">
+                <a class="twPc-bg twPc-block"></a>
+                <div>
+                    <div class="twPc-divUser">
+                        <div class="twPc-divName">
+                            <a>Вы не авторизованы</a>
+                            <a class="ui blue button" href="{% url 'login' %}">Sign In</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- code block start -->
+        </div>
+    </div>
+</div>
+<div style="margin-top: 50px;" class="ui container">
+    <h1 class="ui center aligned header">Мой менеджер задач</h1>
+    <form class="ui form" action="{% url 'add' %}" method="post">
+        {% csrf_token %}
+        <div class="field">
+            <label>Новая задача</label>
+            <input type="text" name="title" placeholder="Введи название новой задачи!">
+            <label>Описание задачи</label>
+            <input type="text" name="desc" placeholder="Введите описание задачи!">
+        </div>
+        <span class="ui grey label">Вы не авторизованы, авторизуйтесь что бы добавлять задачи</span>
+        <a class="ui blue button" href="{% url 'login' %}">Sign In</a>
+    </form>
+</div>
+{% endif %}
+
+
+{% endblock %}
